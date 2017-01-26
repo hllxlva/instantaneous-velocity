@@ -1,26 +1,41 @@
-// シリアルライブラリを取り入れる
-import processing.serial.*;
+import  processing.serial.*;
 
-//インスタンスを用意
-Serial myPort;
+Serial  serial;
+int[]   data;
 
-int x=100; //図形のx座標の変数を用意
-
-void setup(){
-  size(256,256);
-  
-  //シリアルポートの設定
-  //"/dev/tty.usbmodem1411"の部分を前述の「シリアポートを選択する」で選択したシリアルポートに合わせて書き換える
-  myPort = new Serial(this, Serial.list()[0], 9600);
+void setup() {  
+  size(1000, 1000);
+  data = new int [width];
+  serial = new Serial( this, Serial.list()[0], 250000 );
 }
 
-void draw(){
-  background(225);
-  
-  ellipse(x,100,50,50);
+void draw() {
+  background(10);
+  strokeWeight(2); 
+  stroke(0, 255, 0);
+
+  // グラフの描画
+  for (int i=0; i<data.length-1; i++) {
+    line( i, convToGraphPoint(data[i]), i+1, convToGraphPoint(data[i+1]) );
+  }
 }
 
-void serialEvent(Serial p){
-  //変数xにシリアル通信で読み込んだ値を代入
-  x = p.read();
-  println(x);
+void serialEvent(Serial port) {  
+  if ( port.available() >= 3 ) {
+    if ( port.read() == 'H' ) {
+      int high = port.read();      
+      int low = port.read();
+      int recv_data = high*256 + low;
+      
+      // 時系列データを更新
+      for (int i=0; i<data.length-1; i++) {
+        data[i] = data[i+1];
+      }
+      data[data.length-1] = recv_data;
+    }
+  }
+}
+
+float convToGraphPoint(int value) {
+  return (height - value*height/1024.0);
+}
