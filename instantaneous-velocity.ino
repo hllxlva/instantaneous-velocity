@@ -9,11 +9,14 @@ int countA = 1;
 int tempB = 0;
 int tempA = 0;
 int i = 0;
-int f = 0;
 int N;
+int pre_N;
+int sign = 1;
 int lastN;//last number
-int PR[100];//Pulse Rate
-int PN[100];//Pulse Number
+unsigned long PR;//Pulse Rate
+int PN;//Pulse Number
+unsigned long pre_PR;//
+int pre_PN;
 double degreeB = 0;
 double degreeA = 0;
 double degree = 0;
@@ -25,6 +28,8 @@ void va();//velocityA
 void vb();//vekicityB
 int DM();//Discover Missing
 int number();//0,1,2,3
+float V;
+float pre_V;
 
 
 void setup() {
@@ -43,53 +48,17 @@ void setup() {
 void va(){
   m_nValueA = digitalRead(dRotAPin);
   //0123nobaaiwakenitobu
-  number(); 
-  for(i=0;i>=f;i++){
-    PR[i+1] = PR[i];
-    PN[i+1] = PN[i];
-  }
-  PR[0] = time-t0;
-  t0 = time;
-  PN[0] = N;
-  f++;
-  /*if((m_nValueA == 1 && m_nValueB == 1 )||( m_nValueA == 0 && m_nValueB == 0)){
-    degreeA += 0.5;
-    degree += 0.25;
-  }else if((m_nValueA == 1 && m_nValueB == 0 )||( m_nValueA == 0 && m_nValueB == 1)){
-    degreeA -= 0.5;
-    degree -= 0.25;
-  }*/
+  number();
 }
 
 void vb(){
   m_nValueB = digitalRead(dRotBPin);
   number();
-  for(i=0;i<=f;i++){
-    PR[i+1] = PR[i];
-    PN[i+1] = PN[i];
-  }
-  PR[0] = time-t0;
-  t0 = time;
-  PN[0] = N;
-  f++;
-  /*if((m_nValueA == 1 && m_nValueB == 1 )||( m_nValueA == 0 && m_nValueB == 0)){
-    degreeB -= 0.5;
-    degree -= 0.25;
-  }else if((m_nValueA == 1 && m_nValueB == 0 )||( m_nValueA == 0 && m_nValueB == 1)){
-    degreeB += 0.5;
-    degree += 0.25;
-  }*/
 }
-
-/*int vCapture(){
-  switch(i){
-    case 1:v[0]=hozonnsitayatu 
-  }
-}*/
 
 int number(){ 
   N = m_nValueA + 2 * m_nValueB;
-  Serial.println("|");
+  //Serial.print("|");
   switch(N){
     case 2:
       N = 3;
@@ -98,34 +67,64 @@ int number(){
       N = 2;
       break;
   }
+  PR = time-t0;
+  t0 = time;
+  if(PR > 5000){
+    switch(N){
+      case 0:
+        if(PN == 3)sign = 1;
+        else if(PN == 1)sign = -1;
+        else sign = 0;
+        break;
+      case 1:
+        if(PN == 0)sign = 1;
+        else if(PN == 2)sign = -1;
+        else sign = 0;
+        break;
+      case 2:
+        if(PN == 1)sign = 1;
+        else if(PN == 3)sign = -1;
+        else sign = 0;
+        break;
+      case 3:
+        if(PN == 2)sign = 1;
+        else if(PN == 0)sign = -1;
+        else sign = 0;
+        break;
+    }
+  }
+  PN = N;
 }
 
-/*int DM(){//missganaikadouka
-  
+/*int differentValue(float value){
+  float pre_value;
+  if(pre_value != value){
+    Serial.println(value);
+    pre_value = value;
+  }
 }*/
 
 void loop() {
   time = micros();
-  
-  f = 0;
   //Serial.println(time-tt0);
   //Serial.println(N);
   //Serial.print(m_nValueA);
   //Serial.print(m_nValueB);
-  //Serial.print(" | ");
-  Serial.println(PN[0]);
-  /*if (time-tt0 >= 1000){
-    for(i=0;i<=f;i++){
-      Serial.println(PR[i]);
+  //Serial.println(PR);
+  //differentValue(PR);
+  if(pre_PR != PR && PR != 0 && sign != 0){
+    if(PR < 70000){//ほぼ止まってる状態の時以外>Vを計算
+      V = sign*1000/float(PR);
     }
-    
-    //Serial.print(" | ");
-    //Serial.print(degreeB);
-    //Serial.print(" | ");
-    //Serial.println(degree);
-    //degreeA=0;
-    //degreeB=0;
-    //degree=0;
-    tt0=time;
-  }*/
+    else V = 0;
+    if(abs(V-pre_V) > 0.5){//加速度がaを越えたとき値を反映しない
+      V = pre_V;
+    }
+    pre_V = V;
+    Serial.println(V);
+    pre_PR = PR;
+  }
 }
+
+
+
