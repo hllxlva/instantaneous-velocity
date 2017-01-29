@@ -69,7 +69,7 @@ int number(){
   }
   PR = time-t0;
   t0 = time;
-  if(PR > 5000){
+  if(PR > 1000){
     switch(N){
       case 0:
         if(PN == 3)sign = 1;
@@ -118,16 +118,17 @@ void loop() {
       V = 1000/float(PR);//本来いらない
     }
     else V = 0;
-    if(abs(V-pre_V) > 0.5){//加速度がaを越えたとき値を反映しない
+    /*if(abs(V-pre_V) > 0.5){//加速度がaを越えたとき値を反映しない
       V = pre_V;
     }
-    pre_V = V;
+    pre_V = V;*/
     V = 100*V;//100倍
     int value = V;
     Serial.write('H');             // ヘッダの送信
     Serial.write(highByte(value)); // 上位バイトの送信
     Serial.write(lowByte(value));  // 下位バイトの送信
-    //Serial.println(value);
+    Serial.write(sign+1);//∔-符号の送信
+    //Serial.println();
     //Serial.write(V);
     pre_PR = PR;
   }
