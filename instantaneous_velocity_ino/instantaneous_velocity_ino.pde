@@ -7,10 +7,9 @@ int[]   mani_data2;
 int[]   n = new int [5];
 int     min_n;
 int     max_n;
-int     pre_data;
+//int     pre_data;
 int     sign;
 float   r = 0.75;//
-int     t;
 
 void setup(){
   size(2500,1300,P3D);
@@ -26,14 +25,19 @@ void draw(){
   background(0);
   translate(0, height/2.0);
   rotateX(PI);
+  stroke(255);
+  line(0,0,width,0);
+  //元データ
   stroke(0,0,255);
   for (int i=0; i<data.length-1; i++) {
     line( i, data[i], i+1, data[i+1] );
   }
+  //ノイズキャンセル
   stroke(0,255,0);
   for (int i=0; i<mani_data.length-1; i++) {
     line( i, mani_data[i], i+1, mani_data[i+1] );
   }
+  //一次ローパスフィルター
   stroke(255,0,0);
   for (int i=0; i<mani_data2.length-1; i++) {
     line( i, mani_data2[i], i+1, mani_data2[i+1] );
@@ -42,10 +46,10 @@ void draw(){
 
 void serialEvent(Serial port) {  
   if ( port.available() >= 4 ) {
-    if ( port.read() == 'H' ) {
-      int high = port.read();
-      int low = port.read();
-      int Sign = port.read();
+    if ( port.read() == 'H' ) {  //ヘッダの受信
+      int high = port.read();  //上位バイトの受信
+      int low = port.read();  //下位バイトの受信
+      int Sign = port.read();  //+-符号の受信
       int recv_data = high*256 + low;
       
       // 時系列データを更新
