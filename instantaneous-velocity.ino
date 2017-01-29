@@ -1,35 +1,19 @@
 //Arduino Pin - Rotary Encode
 unsigned long time;//
 unsigned long t0 = 0;//
-//unsigned long tt0 = 0;
 int dRotAPin = 2;//
 int dRotBPin = 3;//
-//int countB = 1;
-//int countA = 1;
-//int tempB = 0;
-//int tempA = 0;
-//int i = 0;
 int N;//
-//int pre_N;
 int sign = 1;//
-//int lastN;//last number
 unsigned long PR;//Pulse Rate//
 int PN;//Pulse Number//
 unsigned long pre_PR;//
-//int pre_PN;
-//double degreeB = 0;
-//double degreeA = 0;
-//double degree = 0;
 volatile int m_nValueB = 0;//
 volatile int m_nValueA = 0;//
-//long wa;//omega 
-//long wb; 
 void va();//velocityA//
 void vb();//vekicityB//
-//int DM();//Discover Missing
 int number();//0,1,2,3//
 float V;//
-//float pre_V;
 
 
 void setup() {
