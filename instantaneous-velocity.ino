@@ -101,10 +101,10 @@ void loop() {
     
     //V = 100000*V;//100000倍 = 速度の単位[100000×mm/ms]
     //対Arduino
-    unsigned int value = 100000*V;
+    //unsigned int value = 100000*V;
 
     //対Processing
-    //int value = 1000*V;
+    int value = 1000*V;
     
     //Serial.println(value);
 
