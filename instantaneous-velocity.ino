@@ -13,6 +13,7 @@ volatile int m_nValueA = 0;//A相の値
 void va();//velocityA//
 void vb();//velocityB//
 int number();//0,1,2,3//
+float d = 80;//オムニホイールの直径 
 float V;//最終エンコーダの速度出力
 
 
@@ -92,14 +93,21 @@ void loop() {
   //Serial.println(PR);
   if(pre_PR != PR && PR != 0 && sign != 0){//前の値と変わったとき，取りこぼした時以外
     if(PR < 70000){//ほぼ止まってる状態の時以外>Vを計算
-      //速度の単位[pluse/ms];
-      //V = sign*1000/float(PR);//本来必要な指令だがシリアル用に改善
-      V = 1000/float(PR);//本来いらない
+      //速度の単位[mm/ms];
+      //V = sign*d*PI/1440*1000/float(PR);//本来必要な指令だがシリアル用に改善
+      V = d*PI/1440*1000/float(PR);//本来いらない
     }
     else V = 0;
     
-    V = 100*V;//100倍 = 速度の単位[100×pluse/ms]
-    int value = V;
+    //V = 100000*V;//100000倍 = 速度の単位[100000×mm/ms]
+    //対Arduino
+    unsigned int value = 100000*V;
+
+    //対Processing
+    //int value = 1000*V;
+    
+    //Serial.println(value);
+
     Serial.write('H');             // ヘッダの送信
     Serial.write(highByte(value)); // 上位バイトの送信
     Serial.write(lowByte(value));  // 下位バイトの送信
